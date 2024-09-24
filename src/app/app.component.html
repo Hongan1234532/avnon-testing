@@ -1,0 +1,66 @@
+<h2>Bảng Dữ Liệu</h2>
+<button (click)="addMainTitle()" style="margin-right: 10px;margin-bottom: 40px;">Add title</button>
+<button (click)="addColumn()" style="margin-bottom: 40px;">Add Column</button>
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th *ngFor="let month of data[0].mainTitles.info">{{ month.month }}</th>
+      <th>Actione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let item of data; let i = index">
+      <tr class="header-row">
+        <td>
+          <ng-container *ngIf="editMainTitleIndex === i; else displayMainTitle">
+            <input type="text" 
+                   [value]="item.mainTitles.title" 
+                   (blur)="saveMainTitle(i, $event)" />
+          </ng-container>
+          <ng-template #displayMainTitle>
+            <span (click)="editMainTitle(i)">{{ item.mainTitles.title }}</span>
+          </ng-template>
+        </td>
+        <td *ngFor="let info of item.mainTitles.info; let j = index">
+          <input type="number" [value]="info.income" (input)="updateIncome(i, -1, j, $event)" />
+        </td>
+        <td>
+          <button (click)="deleteMainTitle(i)">Xóa</button>
+        </td>
+      </tr>
+      <ng-container *ngFor="let subTitle of item.mainTitles.subTitles; let j = index">
+        <tr>
+          <td>
+            <ng-container *ngIf="editSubTitleIndex?.mainIndex === i && editSubTitleIndex?.subIndex === j; else displaySubTitle">
+              <input type="text" 
+                     [value]="subTitle.title" 
+                     (blur)="saveSubTitle(i, j, $event)" />
+            </ng-container>
+            <ng-template #displaySubTitle>
+              <span (click)="editSubTitle(i, j)">{{ subTitle.title }}</span>
+            </ng-template>
+          </td>
+          <td *ngFor="let info of subTitle.info; let k = index">
+            <input type="number" [value]="info.income" (input)="updateIncome(i, j, k, $event)" />
+          </td>
+          <td>
+            <button (click)="deleteSubTitle(i, j)">Xóa</button>
+          </td>
+        </tr>
+      </ng-container>
+      <tr>
+        <td>
+          <button (click)="addSubTitle(i)">Add Subtitle</button>
+        </td>
+        <td colspan="3"></td>
+      </tr>
+      <tr class="total-row">
+        <td><strong>Tổng</strong></td>
+        <td *ngFor="let total of calculateMonthlyTotals(item.mainTitles)">
+            <strong>{{ total }}</strong>
+        </td>
+    </tr>
+    </ng-container>
+  </tbody>
+</table>
